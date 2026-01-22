@@ -182,3 +182,26 @@ func parseChildAttachments(inputs []string) ([]model.ChildAttachmentsData, error
 
 	return result, nil
 }
+
+func createCreativeFlexible(client *facebook.Client, in facebook.CreativeInput) error {
+	facebook.ValidateInput(in)
+
+	creative := dto.CreateCreativeFlexibleRequest{
+		ObjectStorySpecFlexible: model.FlexibleDetail{
+			PageID: in.PageID,
+		},
+		AssetFeedSpec: model.AssetFeedSpec{
+			AdFormats: []string{"SINGLE_IMAGE", "SINGLE_VIDEO"},
+		},
+	}
+
+	fmt.Printf("creative %+v \n", creative)
+
+	res, err := client.CreateCreativeFlexible(in.AccountID, creative)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("✓ Creative created successfully!\n")
+	fmt.Printf("  Creative ID: %s\n", res.ID)
+	return nil
+}

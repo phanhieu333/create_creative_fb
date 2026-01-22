@@ -49,3 +49,30 @@ type CarouselDetail struct {
 	PageID   string           `json:"page_id"`
 	LinkData LinkDataCarousel `json:"link_data"`
 }
+type FlexibleDetail struct {
+	PageID string `json:"page_id"`
+}
+type AssetFeedSpec struct {
+	Images            []AssetImage   `json:"images,omitempty"`
+	Videos            []AssetVideo   `json:"videos,omitempty"`
+	Bodies            []AssetText    `json:"bodies,omitempty"`
+	Titles            []AssetText    `json:"titles,omitempty"`
+	Descriptions      []AssetText    `json:"descriptions,omitempty"`
+	AdFormats         []string       `json:"ad_formats"`
+	CallToActionTypes []string       `json:"call_to_action_types,omitempty"`
+	LinkURLs          []AssetLinkURL `json:"link_urls,omitempty"`
+}
+
+type AssetImage struct {
+	Hash string `json:"hash"`
+}
+
+type AssetVideo struct {
+	VideoID string `json:"video_id"`
+}
+type AssetText struct {
+	Text string `json:"text"`
+}
+type AssetLinkURL struct {
+	WebsiteURL string `json:"website_url"`
+}

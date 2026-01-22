@@ -153,3 +153,32 @@ func (c *Client) CreateCreativeCarousel(accountID string, creative dto.CreateCre
 
 	return &result, nil
 }
+
+func (c *Client) CreateCreativeFlexible(accountID string, creative dto.CreateCreativeFlexibleRequest) (*dto.CreateCreativeResponse, error) {
+	endpoint := fmt.Sprintf("%s/act_%s/adcreatives", BaseURL, accountID)
+	payload, err := json.Marshal(creative)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	}
+	body, status, err := c.doJSONRequest(
+		http.MethodPost,
+		endpoint,
+		payload,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if status >= 400 {
+		var errResp map[string]interface{}
+		json.Unmarshal(body, &errResp)
+		return nil, fmt.Errorf("API error (status %d): %v", status, errResp)
+	}
+
+	var result dto.CreateCreativeResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	return &result, nil
+}

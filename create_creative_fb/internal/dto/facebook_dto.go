@@ -16,6 +16,11 @@ type CreateCreativeCarouselRequest struct {
 	ObjectStorySpecCarousel model.CarouselDetail `json:"object_story_spec"`
 }
 
+type CreateCreativeFlexibleRequest struct {
+	ObjectStorySpecFlexible model.FlexibleDetail `json:"object_story_spec"`
+	AssetFeedSpec           model.AssetFeedSpec  `json:"asset_feed_spec"`
+}
+
 type CreateCreativeResponse struct {
 	ID string `json:"id"`
 }
