@@ -76,3 +76,26 @@ type AssetText struct {
 type AssetLinkURL struct {
 	WebsiteURL string `json:"website_url"`
 }
+
+// Advantage Optimize Creative / Degrees of Freedom spec structures
+type CreativeFeatureEnrollment struct {
+	EnrollStatus string `json:"enroll_status"`
+}
+
+type CreativeFeaturesSpec struct {
+	AdvantagePlusCreative *CreativeFeatureEnrollment `json:"advantage_plus_creative,omitempty"`
+	ImageEnhancement      *CreativeFeatureEnrollment `json:"image_enhancement,omitempty"`
+	ImageTemplates        *CreativeFeatureEnrollment `json:"image_templates,omitempty"`
+	ImageTouchups         *CreativeFeatureEnrollment `json:"image_touchups,omitempty"`
+	ImageUncrop           *CreativeFeatureEnrollment `json:"image_uncrop,omitempty"`
+	InlineComment         *CreativeFeatureEnrollment `json:"inline_comment,omitempty"`
+	ProductExtensions     *CreativeFeatureEnrollment `json:"product_extensions,omitempty"`
+	SiteExtensions        *CreativeFeatureEnrollment `json:"site_extensions,omitempty"`
+	StandardEnhancements  *CreativeFeatureEnrollment `json:"standard_enhancements,omitempty"`
+	TextOptimizations     *CreativeFeatureEnrollment `json:"text_optimizations,omitempty"`
+	VideoAutoCrop         *CreativeFeatureEnrollment `json:"video_auto_crop,omitempty"`
+}
+
+type DegreesOfFreedomSpec struct {
+	CreativeFeaturesSpec CreativeFeaturesSpec `json:"creative_features_spec"`
+}

@@ -38,7 +38,9 @@ func (i *arrayFlags) Set(value string) error {
 	return nil
 }
 func parseFlags() facebook.CreativeInput {
-	input := facebook.CreativeInput{}
+	input := facebook.CreativeInput{
+		Features: make(map[string]string),
+	}
 
 	var childAttachments arrayFlags
 
@@ -52,6 +54,7 @@ func parseFlags() facebook.CreativeInput {
 	flag.StringVar(&input.Message, "message", "", "Creative message")
 	flag.StringVar(&input.VideoID, "video", "", "Video ID")
 	flag.StringVar(&input.Thumbnail, "thumbnail", "", "Thumbnail URL")
+	flag.StringVar(&input.AdvantageOptimizeCreative, "advantage_optimize", "off", "Enable advantage optimize creative")
 	flag.Var(
 		&childAttachments,
 		"child_attachment",
@@ -88,6 +91,11 @@ func createSingleImage(client *facebook.Client, in facebook.CreativeInput) error
 				Link: in.Link,
 			},
 		},
+	}
+
+	if in.AdvantageOptimizeCreative == "on" {
+		fmt.Printf("Features %s \n", in.Features)
+		creative.DegreesOfFreedomSpec = buildDegreesOfFreedomSpec(in)
 	}
 
 	res, err := client.CreateCreativeSingleImage(in.AccountID, creative)
@@ -204,4 +212,27 @@ func createCreativeFlexible(client *facebook.Client, in facebook.CreativeInput) 
 	fmt.Printf("✓ Creative created successfully!\n")
 	fmt.Printf("  Creative ID: %s\n", res.ID)
 	return nil
+}
+func buildDegreesOfFreedomSpec(in facebook.CreativeInput) *model.DegreesOfFreedomSpec {
+	getEnrollStatus := func(featureName string) string {
+		if status, exists := in.Features[featureName]; exists && status == "on" {
+			return "OPT_IN"
+		}
+		return "OPT_OUT"
+	}
+
+	return &model.DegreesOfFreedomSpec{
+		CreativeFeaturesSpec: model.CreativeFeaturesSpec{
+			AdvantagePlusCreative: &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("advantage_plus_creative")},
+			ImageEnhancement:      &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("image_enhancement")},
+			ImageTemplates:        &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("image_templates")},
+			ImageTouchups:         &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("image_touchups")},
+			ImageUncrop:           &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("image_uncrop")},
+			InlineComment:         &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("inline_comment")},
+			ProductExtensions:     &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("product_extensions")},
+			SiteExtensions:        &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("site_extensions")},
+			TextOptimizations:     &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("text_optimizations")},
+			VideoAutoCrop:         &model.CreativeFeatureEnrollment{EnrollStatus: getEnrollStatus("video_auto_crop")},
+		},
+	}
 }
