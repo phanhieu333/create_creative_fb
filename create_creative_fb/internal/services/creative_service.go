@@ -22,6 +22,7 @@ func NewCreativeService(repo *repositories.CreativeRepository) *CreativeService 
 }
 
 func (s *CreativeService) CreateCreative(input facebook.CreativeInput) (*dto.CreateCreativeResponse, error) {
+	fmt.Printf("Input: %+v\n", input)
 	if err := s.validator.ValidateInput(input); err != nil {
 		return nil, err
 	}

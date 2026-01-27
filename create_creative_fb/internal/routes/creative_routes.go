@@ -29,8 +29,6 @@ func (cr *CreativeRoutes) RegisterRoutes(app *fiber.App) {
 func (cr *CreativeRoutes) CreateCreative(c *fiber.Ctx) error {
 	var req dto.CreateCreativeRequest
 
-	fmt.Printf("Request body: %+v\n", req)
-
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(dto.CreativeResponse{
 			Success: false,
@@ -39,20 +37,27 @@ func (cr *CreativeRoutes) CreateCreative(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Printf("Request body: %+v\n", req)
+
+	// Map incoming request to internal facebook.CreativeInput
 	input := facebook.CreativeInput{
-		Type:                      req.Type,
-		AccountID:                 req.AccountID,
-		PageID:                    req.PageID,
-		Name:                      req.Name,
-		ImageHash:                 req.ImageHash,
-		Link:                      req.Link,
-		Picture:                   req.Picture,
-		Message:                   req.Message,
-		VideoID:                   req.VideoID,
-		Thumbnail:                 req.Thumbnail,
-		AdvantageOptimizeCreative: req.AdvantageOptimizeCreative,
-		Features:                  req.Features,
-		ChildAttachmentsInput:     req.ChildAttachments,
+		Type:                  req.Type,
+		AccountID:             req.AccountID,
+		PageID:                req.PageID,
+		Features:              req.Features,
+		ChildAttachmentsInput: req.ChildAttachments,
+	}
+
+	if req.ObjectStory != nil {
+		if req.ObjectStory.PageID != "" {
+			input.PageID = req.ObjectStory.PageID
+		}
+		if req.ObjectStory.LinkData != nil {
+			input.Link = req.ObjectStory.LinkData.Link
+			input.Message = req.ObjectStory.LinkData.Message
+			input.ImageHash = req.ObjectStory.LinkData.ImageHash
+			// CTA type is available at req.ObjectStory.LinkData.CallToAction.Type if needed
+		}
 	}
 
 	result, err := cr.service.CreateCreative(input)
