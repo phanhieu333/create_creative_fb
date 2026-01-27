@@ -9,7 +9,6 @@ import (
 	"creative_fb/internal/repositories"
 )
 
-// CreativeService handles business logic for creative creation
 type CreativeService struct {
 	repo      *repositories.CreativeRepository
 	validator *CreativeValidator
@@ -22,9 +21,7 @@ func NewCreativeService(repo *repositories.CreativeRepository) *CreativeService 
 	}
 }
 
-// CreateCreative dispatches creative creation based on type
 func (s *CreativeService) CreateCreative(input facebook.CreativeInput) (*dto.CreateCreativeResponse, error) {
-	// Validate input
 	if err := s.validator.ValidateInput(input); err != nil {
 		return nil, err
 	}
@@ -53,9 +50,7 @@ func (s *CreativeService) createSingleImage(input facebook.CreativeInput) (*dto.
 		},
 	}
 
-	if input.AdvantageOptimizeCreative == "on" {
-		creative.DegreesOfFreedomSpec = s.buildDegreesOfFreedomSpec(input)
-	}
+	creative.DegreesOfFreedomSpec = s.buildDegreesOfFreedomSpec(input)
 
 	return s.repo.CreateSingleImage(input.AccountID, creative)
 }
@@ -71,9 +66,7 @@ func (s *CreativeService) createSingleVideo(input facebook.CreativeInput) (*dto.
 		},
 	}
 
-	if input.AdvantageOptimizeCreative == "on" {
-		creative.DegreesOfFreedomSpec = s.buildDegreesOfFreedomSpec(input)
-	}
+	creative.DegreesOfFreedomSpec = s.buildDegreesOfFreedomSpec(input)
 
 	return s.repo.CreateSingleVideo(input.AccountID, creative)
 }
@@ -89,9 +82,7 @@ func (s *CreativeService) createCarousel(input facebook.CreativeInput) (*dto.Cre
 		},
 	}
 
-	if input.AdvantageOptimizeCreative == "on" {
-		creative.DegreesOfFreedomSpec = s.buildDegreesOfFreedomSpec(input)
-	}
+	creative.DegreesOfFreedomSpec = s.buildDegreesOfFreedomSpec(input)
 
 	return s.repo.CreateCarousel(input.AccountID, creative)
 }
@@ -106,9 +97,7 @@ func (s *CreativeService) createFlexible(input facebook.CreativeInput) (*dto.Cre
 		},
 	}
 
-	if input.AdvantageOptimizeCreative == "on" {
-		creative.DegreesOfFreedomSpec = s.buildDegreesOfFreedomSpec(input)
-	}
+	creative.DegreesOfFreedomSpec = s.buildDegreesOfFreedomSpec(input)
 
 	return s.repo.CreateFlexible(input.AccountID, creative)
 }
@@ -118,14 +107,8 @@ func (s *CreativeService) buildDegreesOfFreedomSpec(input facebook.CreativeInput
 		CreativeFeaturesSpec: model.CreativeFeaturesSpec{},
 	}
 
-	enrollStatus := "OPT_IN"
-	if val, exists := input.Features["enroll_status"]; exists {
-		enrollStatus = val
-	}
-
 	switch input.Type {
 	case "single_image", "single_video":
-		// For single asset: toggle features individually
 		singleAssetFeatures := []string{
 			"advantage_plus_creative",
 			"cv_transformation",
@@ -145,15 +128,14 @@ func (s *CreativeService) buildDegreesOfFreedomSpec(input facebook.CreativeInput
 		}
 
 		for _, feature := range singleAssetFeatures {
-			if val, exists := input.Features[feature]; exists && (val == "on" || val == "true") {
+			if status, exists := input.Features[feature]; exists {
 				spec.CreativeFeaturesSpec[feature] = &model.CreativeFeatureEnrollment{
-					EnrollStatus: enrollStatus,
+					EnrollStatus: status,
 				}
 			}
 		}
 
-	case "carousel", "flexible":
-		// For carousel/flexible: default OPT_IN for all features
+	case "flexible":
 		allFeatures := []string{
 			"advantage_plus_creative",
 			"cv_transformation",
@@ -178,6 +160,8 @@ func (s *CreativeService) buildDegreesOfFreedomSpec(input facebook.CreativeInput
 			}
 		}
 	}
+
+	fmt.Printf("spec %v \n", spec)
 
 	return spec
 }

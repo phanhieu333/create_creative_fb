@@ -6,10 +6,11 @@ import (
 
 	"creative_fb/internal/config"
 	"creative_fb/internal/facebook"
-	"creative_fb/internal/handlers"
 	"creative_fb/internal/repositories"
+	"creative_fb/internal/routes"
 	"creative_fb/internal/services"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )
 
@@ -17,26 +18,41 @@ func main() {
 	// Load environment variables
 	_ = godotenv.Load()
 
-	// Initialize config
+	// Load config
 	cfg := config.LoadConfig()
-	if cfg.FacebookAccessToken == "" {
-		log.Fatal("FACEBOOK_ACCESS_TOKEN environment variable is required")
+
+	// Get default account access token from config
+	var accessToken string
+	if len(cfg.Facebook.Accounts) > 0 {
+		// Get first account
+		for _, acc := range cfg.Facebook.Accounts {
+			accessToken = acc.AccessToken
+			break
+		}
+	}
+
+	if accessToken == "" {
+		log.Fatal("No Facebook access token found in config")
 	}
 
 	// Initialize layers
-	handler := handlers.NewCreativeHandler()
-	client := facebook.NewClient(cfg.FacebookAccessToken)
+	client := facebook.NewClient(accessToken)
 	repo := repositories.NewCreativeRepository(client)
 	service := services.NewCreativeService(repo)
 
-	// Parse command line flags
-	input := handler.ParseFlags()
+	// Initialize Fiber router
+	app := fiber.New(fiber.Config{
+		AppName: "Creative Facebook API",
+	})
 
-	result, err := service.CreateCreative(input)
-	if err != nil {
-		log.Fatalf("Failed to create creative: %v", err)
+	// Register routes
+	creativeRoutes := routes.NewCreativeRoutes(service)
+	creativeRoutes.RegisterRoutes(app)
+
+	// Start server
+	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+	log.Printf("Starting server on %s", addr)
+	if err := app.Listen(addr); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
 	}
-
-	fmt.Printf("✓ Creative created successfully!\n")
-	fmt.Printf("  Creative ID: %s\n", result.ID)
 }
