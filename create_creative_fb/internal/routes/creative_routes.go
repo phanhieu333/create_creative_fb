@@ -2,9 +2,7 @@ package routes
 
 import (
 	"creative_fb/internal/dto"
-	"creative_fb/internal/facebook"
 	"creative_fb/internal/services"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -37,30 +35,7 @@ func (cr *CreativeRoutes) CreateCreative(c *fiber.Ctx) error {
 		})
 	}
 
-	fmt.Printf("Request body: %+v\n", req)
-
-	// Map incoming request to internal facebook.CreativeInput
-	input := facebook.CreativeInput{
-		Type:                  req.Type,
-		AccountID:             req.AccountID,
-		PageID:                req.PageID,
-		Features:              req.Features,
-		ChildAttachmentsInput: req.ChildAttachments,
-	}
-
-	if req.ObjectStory != nil {
-		if req.ObjectStory.PageID != "" {
-			input.PageID = req.ObjectStory.PageID
-		}
-		if req.ObjectStory.LinkData != nil {
-			input.Link = req.ObjectStory.LinkData.Link
-			input.Message = req.ObjectStory.LinkData.Message
-			input.ImageHash = req.ObjectStory.LinkData.ImageHash
-			// CTA type is available at req.ObjectStory.LinkData.CallToAction.Type if needed
-		}
-	}
-
-	result, err := cr.service.CreateCreative(input)
+	result, err := cr.service.CreateCreative(req)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(dto.CreativeResponse{
 			Success: false,

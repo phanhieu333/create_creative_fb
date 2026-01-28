@@ -16,18 +16,18 @@ func NewCreativeRepository(client *facebook.Client) *CreativeRepository {
 	}
 }
 
-func (r *CreativeRepository) CreateSingleImage(accountID string, req dto.CreateCreativeSingleImageRequest) (*dto.CreateCreativeResponse, error) {
-	return r.client.CreateCreativeSingleImage(accountID, req)
+func (r *CreativeRepository) CreateCreative(accountID string, req dto.CreateCreativeRequest) (*dto.CreateCreativeResponse, error) {
+	return r.client.CreateCreative(accountID, req)
 }
 
-func (r *CreativeRepository) CreateSingleVideo(accountID string, req dto.CreateCreativeSingleVideoRequest) (*dto.CreateCreativeResponse, error) {
-	return r.client.CreateCreativeSingleVideo(accountID, req)
-}
+// func (r *CreativeRepository) CreateSingleVideo(accountID string, req dto.CreateCreativeRequest) (*dto.CreateCreativeResponse, error) {
+// 	return r.client.CreateCreativeSingleVideo(accountID, req)
+// }
 
-func (r *CreativeRepository) CreateCarousel(accountID string, req dto.CreateCreativeCarouselRequest) (*dto.CreateCreativeResponse, error) {
-	return r.client.CreateCreativeCarousel(accountID, req)
-}
+// func (r *CreativeRepository) CreateCarousel(accountID string, req dto.CreateCreativeCarouselRequest) (*dto.CreateCreativeResponse, error) {
+// 	return r.client.CreateCreativeCarousel(accountID, req)
+// }
 
-func (r *CreativeRepository) CreateFlexible(accountID string, req dto.CreateCreativeFlexibleRequest) (*dto.CreateCreativeResponse, error) {
-	return r.client.CreateCreativeFlexible(accountID, req)
-}
+// func (r *CreativeRepository) CreateFlexible(accountID string, req dto.CreateCreativeFlexibleRequest) (*dto.CreateCreativeResponse, error) {
+// 	return r.client.CreateCreativeFlexible(accountID, req)
+// }

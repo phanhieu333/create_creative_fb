@@ -1,34 +1,47 @@
 package dto
 
-import (
-	"creative_fb/internal/model"
-)
-
-// CreateCreativeRequest represents the incoming HTTP request body.
-// It supports the nested `object_story_spec` structure like the example
-// provided by the user.
 type CreateCreativeRequest struct {
-	Type        string            `json:"type"`
-	AccountID   string            `json:"account_id"`
-	PageID      string            `json:"page_id"`
-	ObjectStory *ObjectStorySpec  `json:"object_story_spec,omitempty"`
-	Features    map[string]string `json:"features,omitempty"`
-	// Keep child attachments if present for carousel
-	ChildAttachments []model.ChildAttachmentsData `json:"child_attachments,omitempty"`
+	AccountID            string                `json:"account_id"`
+	ObjectStory          *ObjectStorySpec      `json:"object_story_spec,omitempty"`
+	DegreesOfFreedomSpec *DegreesOfFreedomSpec `json:"degrees_of_freedom_spec,omitempty"`
 }
 
 type ObjectStorySpec struct {
-	PageID   string    `json:"page_id,omitempty"`
-	LinkData *LinkData `json:"link_data,omitempty"`
-	// video_data and other variants can be added here later
+	PageID    string     `json:"page_id,omitempty"`
+	LinkData  *LinkData  `json:"link_data,omitempty"`
+	VideoData *VideoData `json:"video_data,omitempty"`
+}
+
+type DegreesOfFreedomSpec struct {
+	CreativeFeaturesSpec map[string]*CreativeFeatureEnrollment `json:"creative_features_spec"`
+}
+
+type CreativeFeatureEnrollment struct {
+	EnrollStatus string `json:"enroll_status"`
 }
 
 type LinkData struct {
-	Link         string        `json:"link,omitempty"`
-	Message      string        `json:"message,omitempty"`
+	Link             string                 `json:"link,omitempty"`
+	Message          string                 `json:"message,omitempty"`
+	Description      string                 `json:"description,omitempty"`
+	ImageHash        string                 `json:"image_hash,omitempty"`
+	CallToAction     *CallToAction          `json:"call_to_action,omitempty"`
+	ChildAttachments []ChildAttachmentsData `json:"child_attachments,omitempty"`
+}
+
+type ChildAttachmentsData struct {
+	Link         string        `json:"link"`
+	VideoID      string        `json:"video_id"`
+	Name         string        `json:"name,omitempty"`
 	Description  string        `json:"description,omitempty"`
-	ImageHash    string        `json:"image_hash,omitempty"`
+	ImageHash    string        `json:"image_hash"`
 	CallToAction *CallToAction `json:"call_to_action,omitempty"`
+}
+
+type VideoData struct {
+	CallToAction *CallToAction `json:"call_to_action,omitempty"`
+	ImageURL     string        `json:"image_url"`
+	VideoID      string        `json:"video_id"`
 }
 
 type CallToAction struct {
