@@ -31,21 +31,29 @@ type LinkData struct {
 
 type ChildAttachmentsData struct {
 	Link         string        `json:"link"`
-	VideoID      string        `json:"video_id"`
+	VideoID      string        `json:"video_id,omitempty"`
 	Name         string        `json:"name,omitempty"`
 	Description  string        `json:"description,omitempty"`
-	ImageHash    string        `json:"image_hash"`
+	ImageHash    string        `json:"image_hash,omitempty"`
 	CallToAction *CallToAction `json:"call_to_action,omitempty"`
 }
 
 type VideoData struct {
-	CallToAction *CallToAction `json:"call_to_action,omitempty"`
-	ImageURL     string        `json:"image_url"`
 	VideoID      string        `json:"video_id"`
+	ImageURL     string        `json:"image_url,omitempty"`
+	Title        string        `json:"title,omitempty"`
+	Message      string        `json:"message,omitempty"`
+	Description  string        `json:"description,omitempty"`
+	CallToAction *CallToAction `json:"call_to_action,omitempty"`
 }
 
 type CallToAction struct {
-	Type string `json:"type,omitempty"`
+	Type  string             `json:"type,omitempty"`
+	Value *CallToActionValue `json:"value,omitempty"`
+}
+
+type CallToActionValue struct {
+	Link string `json:"link,omitempty"`
 }
 
 type CreativeResponse struct {

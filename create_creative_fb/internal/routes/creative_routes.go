@@ -2,7 +2,10 @@ package routes
 
 import (
 	"creative_fb/internal/dto"
+	"creative_fb/internal/facebook"
 	"creative_fb/internal/services"
+	"encoding/json"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -25,17 +28,19 @@ func (cr *CreativeRoutes) RegisterRoutes(app *fiber.App) {
 }
 
 func (cr *CreativeRoutes) CreateCreative(c *fiber.Ctx) error {
-	var req dto.CreateCreativeRequest
+	var in facebook.CreateCreativeInput
 
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.BodyParser(&in); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(dto.CreativeResponse{
 			Success: false,
 			Message: "Invalid request body",
 			Error:   err.Error(),
 		})
 	}
-
-	result, err := cr.service.CreateCreative(req)
+	creative := facebook.MapInputToDTO(in)
+	b, _ := json.MarshalIndent(creative, "", "  ")
+	fmt.Println(string(b))
+	result, err := cr.service.CreateCreative(creative)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(dto.CreativeResponse{
 			Success: false,
