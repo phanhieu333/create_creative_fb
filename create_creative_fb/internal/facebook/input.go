@@ -1,6 +1,8 @@
 package facebook
 
-import "creative_fb/internal/dto"
+import (
+	"creative_fb/internal/dto"
+)
 
 type CreateCreativeInput struct {
 	AccountID        string            `json:"account_id"`
@@ -22,14 +24,19 @@ type CreateCreativeInput struct {
 		ImageHash    string            `json:"image_hash,omitempty"`
 		CallToAction *dto.CallToAction `json:"call_to_action,omitempty"`
 	} `json:"child_attachments,omitempty"`
+
+	CreativeFeatureSpec map[string]*dto.CreativeFeatureEnrollment `json:"creative_features_spec,omitempty"`
 }
 
-// mapping từ input -> dto.CreateCreativeRequest
 func MapInputToDTO(in CreateCreativeInput) dto.CreateCreativeRequest {
 	cr := dto.CreateCreativeRequest{
 		AccountID: in.AccountID,
 		ObjectStory: &dto.ObjectStorySpec{
 			PageID: in.PageID,
+		},
+		AssetFeedSpec: &dto.AssetFeedSpec{},
+		DegreesOfFreedomSpec: &dto.DegreesOfFreedomSpec{
+			CreativeFeaturesSpec: in.CreativeFeatureSpec,
 		},
 	}
 

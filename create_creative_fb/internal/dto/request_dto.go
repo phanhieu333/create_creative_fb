@@ -3,6 +3,7 @@ package dto
 type CreateCreativeRequest struct {
 	AccountID            string                `json:"account_id"`
 	ObjectStory          *ObjectStorySpec      `json:"object_story_spec,omitempty"`
+	AssetFeedSpec        *AssetFeedSpec        `json:"asset_feed_spec,omitempty"`
 	DegreesOfFreedomSpec *DegreesOfFreedomSpec `json:"degrees_of_freedom_spec,omitempty"`
 }
 
@@ -61,4 +62,13 @@ type CreativeResponse struct {
 	Message string `json:"message"`
 	ID      string `json:"id"`
 	Error   string `json:"error,omitempty"`
+}
+type AssetFeedSpec struct {
+	Bodies       []AssetText `json:"bodies,omitempty"`
+	Descriptions []AssetText `json:"descriptions,omitempty"`
+	Titles       []AssetText `json:"titles,omitempty"`
+}
+
+type AssetText struct {
+	Text string `json:"text"`
 }

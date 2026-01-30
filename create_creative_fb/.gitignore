@@ -2,7 +2,7 @@
 .env
 .env.local
 .env.example
-
+.facebook_config.json
 
 # Go
 *.o
